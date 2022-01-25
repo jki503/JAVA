@@ -21,10 +21,77 @@ Author: Jung
 
 ---
 
-[Optional](#optional)
+- [My Goal](#my-goal)
+- [Table of Contents](#table-of-contents)
+  - [**Enum**](#enum)
+  - [**Optional**](#optional)
 
 </br>
 </br>
+
+### **Enum**
+
+</br>
+
+- class : java.lang.Enum;
+  - Enum class 안에 조작할 수 있는 메소드 포함.
+
+</br>
+
+- method
+
+  |     메서드      |               기능               |
+  | :-------------: | :------------------------------: |
+  | Enum.ordinal()  | enum 상수값의 index를 int로 반환 |
+  |   Enum.name()   |   enum 상수를 string으로 반환    |
+  | Enum.toString() |   enum 상수를 string으로 반환    |
+  |  Enum.values()  |      enum type 배열로 반환       |
+
+</br>
+
+- 예시 (skill/src/main/java/com/java/skill/Enum)
+
+```java
+public enum Direction {
+    // 명시적 index 설정
+    // UP(2), RIGHT(5), DOWN(6), LEFT(8);
+
+    // 상수의 index 값은 0,1,2... 오름차순 증가로 설정
+    UP, RIGHT, DOWN, LEFT;
+
+}
+
+public class EnumPractice {
+    public static void main(String[] args) {
+
+        // Enum.values() : Enum 타입의 모든 상수 저장하는 배열
+        Direction[] directions = Direction.values();
+
+        // Direction 타입으로 출력
+        for (Direction direction : directions) {
+            System.out.println(direction);
+        }
+
+        // Direction을 Integer List로
+        List<Integer> arrInteger = Arrays.stream(directions)
+                .map(Enum::ordinal)
+                .collect(Collectors.toList());
+        System.out.println(arrInteger);
+
+        // Enum 상수의 index를 int로 반환. -> 2출력
+        int ordinalDown = Direction.DOWN.ordinal();
+        System.out.println(ordinalDown);
+
+        // Enum 타입의 키워드를 string으로 반환
+        String nameDown = Direction.DOWN.name();
+        System.out.println(nameDown);
+
+        // Enum 타입의 키워드를 string으로 반환
+        String toStringDown = Direction.DOWN.toString();
+        System.out.println(toStringDown);
+    }
+}
+```
 
 ### **Optional**
 

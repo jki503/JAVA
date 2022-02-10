@@ -5,24 +5,37 @@ tags: [객체지향, Java, Spring]
 Author: Jung
 ---
 
-## My Goal
+## **My Goal**
 
 ---
 
 </br>
 
-- 자바 공부
+- Java 개발자니까 Java 공부
+- 깊이가 필요하면 시간 투자를 과감히 -> 나중에 더 돌아가는 길일 수 있음.
 - 자바 모듈과 클래스 사용법 정리
 
 </br>
 </br>
 
-## Table of Contents
+## **Table of Contents**
 
 ---
 
-- [My Goal](#my-goal)
-- [Table of Contents](#table-of-contents)
+- [**My Goal**](#my-goal)
+- [**Table of Contents**](#table-of-contents)
+  - [**JVM**](#jvm)
+    - [**JRE, JDK 요약**](#jre-jdk-요약)
+    - [**JVM 사용 이유**](#jvm-사용-이유)
+    - [**Sequnece 정리**](#sequnece-정리)
+    - [**JVM 구조**](#jvm-구조)
+    - [**Class Loader**](#class-loader)
+    - [**Initialization**](#initialization)
+    - [**RunTime Data Area**](#runtime-data-area)
+      - [**Execution Engine**](#execution-engine)
+    - [**Garbage Collection**](#garbage-collection)
+      - [**메모리 누수**](#메모리-누수)
+      - [**Garbage 판단 기준**](#garbage-판단-기준)
   - [**Enum**](#enum)
   - [**String StringBuilder StringTokenizer**](#string-stringbuilder-stringtokenizer)
     - [String](#string)
@@ -30,6 +43,181 @@ Author: Jung
     - [StringTokenizer](#stringtokenizer)
   - [**Optional**](#optional)
 
+</br>
+</br>
+
+### **JVM**
+
+</br>
+
+#### **JRE, JDK 요약**
+
+- 자바 프로그램을 개발 하기 위해 JAVA SE(자바 구현체)인 JRE나 JDK 필요
+
+|                JRE                |           JDK           |
+| :-------------------------------: | :---------------------: |
+|          자바 실행 환경           |     자바 개발 키트      |
+| JVM + 자바 표준 클래스 라이브러리 | JRE + Tools & Tool APIs |
+
+> - JRE는 실행 환경만을 제공 하고 그 이외에 컴파일 및 tool 명령어 제공 X
+> - JDK는 JRE를 포함하며 javac, jar 등의 tool api를 제공.
+
+</br>
+
+#### **JVM 사용 이유**
+
+</br>
+
+![JVM image](./res/JVM.jpeg)
+
+> - .java를 바로 binary code(기계어)로 변환 할 경우 -> **`다른 OS에서는 실행 할 수 없음.`**
+> - JVM은
+>   compile time에서 **.java -> .class(바이트 코드)** 변환
+>   변환 한 **.class(바이트 코드를) runtime에서 넘겨 받은 후**
+>   각 **OS에 맞게 binary code로 해석.**
+> - 즉, 자바 파일이 OS에 종속적이지 않게 해주도록 하는 것이 JVM의 역할
+
+</br>
+
+#### **Sequnece 정리**
+
+</br>
+
+![JVM sequence](./res/JVM-sequence.jpeg)
+
+</br>
+
+|              |        Action         |                 Description                  |
+| :----------: | :-------------------: | :------------------------------------------: |
+| compile time |   .java -> . class    |           소스 코드 -> 바이트 코드           |
+|   Run time   | .class -> binary code | JVM에서 바이트 코드 -> OS 맞는 바이나리 코드 |
+
+</br>
+
+#### **JVM 구조**
+
+</br>
+
+![JVM model](./res/JVM-Model.jpeg)
+
+</br>
+
+#### **Class Loader**
+
+</br>
+
+> - JVM은
+>   - Class lodaer에서 .class를 load하고 -메모리에 적재하는 작업을 수행
+
+</br>
+
+- **Loading**
+
+</br>
+
+|      Name       |                    Description                     |
+| :-------------: | :------------------------------------------------: |
+|  Bootstrap CL   | rt.jar에 담긴 클래스 load, 가장 최상위 클래스 로더 |
+|  Extension CL   |         JDK Extension library 클래스 load          |
+| Application CL  |      ($classpath$)어플리 케이션의 클래스 로드      |
+| User-Defined CL |          개박자가 직접 생성한 클래스 로드          |
+
+</br>
+
+- **Linking**
+
+</br>
+
+|     Name     |                                Description                                 |
+| :----------: | :------------------------------------------------------------------------: |
+| Verification |                         .class 파일의 정확성 보장                          |
+| Preparation  | JVM이 메모리를 기본 값 초기화 후, 클래스 변수(static)들을 위한 메모리 할당 |
+|  Resolution  |                   Symbolic reference -> direct reference                   |
+
+</br>
+
+> Symbolic referecne는 primitive를 제외한 모든 타입을 명시적 주소 기반의 레퍼런스가 아닌
+> Symbolic reference를 통해 참조.
+
+</br>
+
+#### **Initialization**
+
+</br>
+
+- static 값 초기화 및 변수 할당
+- static initializer 실행
+
+> - 단 한 번 실행
+>   - 해당 클래스의 객체 생성 할 때
+>   - 해당 클래스의 static 변수에 최초 접근 할 때,(즉 객체를 생성하지 않았더라도 실행)
+
+</br>
+
+#### **RunTime Data Area**
+
+</br>
+
+> - JVM이 프로그램을 실행하기 위해 OS로부터 할당 받은 메모리 공간
+> - 추후 JVM 튜닝 공부 요망(2022.02.10)
+
+</br>
+
+|         Name         |                                                   Description                                                   |
+| :------------------: | :-------------------------------------------------------------------------------------------------------------: |
+|     Method Area      |                                  클래스 파일, 인터페이스, 메서드, static, 필드                                  |
+|         Heap         |                                                 객체, 인스턴스                                                  |
+|        Stack         | JVM thread를 위한 공간, 메소드 호출 될 때 frame 생성. 메소드 상태 정보 저장, 쓰레드 종료시 runtime stack 사라짐 |
+|     PC register      |                               thread에서 현재 실행할 스택 프레임 가리키는 포인터                                |
+| Native Method Stacks |                            thread에서 native method가 호출 될 때 저장, JNI(c,c++ 등)                            |
+
+</br>
+
+##### **Execution Engine**
+
+|         Name          |                                Description                                 |
+| :-------------------: | :------------------------------------------------------------------------: |
+|      Interpreter      | 바이트 코드를 네이티브 코드로 변경시키면서 실행, 반복되는 코드 발견 -> JIT |
+|     JIT Compiler      |                 반복되는 코드를 모두 네이티브 코드로 변경                  |
+|   Garbage Collector   |                더이상 참조 하지 않은 객체를 메모리에서 해제                |
+|          JNI          |                   c나 c++로 된 함수를 사용 가능하게 만듦                   |
+| Native Method Library |                         c, c++로 작성된 라이브러리                         |
+
+</br>
+
+#### **Garbage Collection**
+
+> - 프로그램 실행 시 OS가 JVM에 메모리 할당
+>   - 할당 받은 것 이상 사용 -> 에러, 프로그램 종료
+>   - 즉, 현재 프로세스에서 메모리 누수 발생 하여도 실행 종료 될 뿐 영향 X
+
+</br>
+
+##### **메모리 누수**
+
+</br>
+
+![Memory leaked](./res/Memory-Leak.png)
+
+> - Memory의 heap 영역에 할당된 부분 참조 X -> but 해제되지 않은 채로 메모리 점유
+> - JVM의 run time data areas는 WAS에서 빈번하게 성능 이슈
+
+</br>
+
+##### **Garbage 판단 기준**
+
+</br>
+
+> - Reachability
+>   - 스택 영역의 Java 메서드 내에서 실행하는 지역 변수, 파라미터, 연산 작업중 피연산자에 의한 참조
+>   - 메서드 영역의 상수 풀이나 정적 변수에 의한 참조
+>   - 메모리에 남아있는 JNI에 의해 생성된 객체에서 참조
+
+</br>
+
+- [To.목차](#table-of-contents)
+
+</br>
 </br>
 </br>
 
@@ -96,6 +284,10 @@ public class EnumPractice {
     }
 }
 ```
+
+</br>
+
+- [To.목차](#table-of-contents)
 
 </br>
 </br>
@@ -293,6 +485,10 @@ public class stringTokenizerPractice {
 ```
 
 </br>
+
+- [To.목차](#table-of-contents)
+
+</br>
 </br>
 </br>
 
@@ -337,8 +533,6 @@ public class stringTokenizerPractice {
 > - try catch, if else 문보다 유지보수 용이
 >   - stream, fileter, flatmap등으로 chaining 가능.
 
-</br>
-
 - 예시
 
 ```java
@@ -348,3 +542,11 @@ public class stringTokenizerPractice {
 ```java
 
 ```
+
+</br>
+
+- [To.목차](#table-of-contents)
+
+</br>
+</br>
+</br>

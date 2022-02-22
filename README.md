@@ -36,6 +36,7 @@ Author: Jung
     - [**Garbage Collection**](#garbage-collection)
       - [**메모리 누수**](#메모리-누수)
       - [**Garbage 판단 기준**](#garbage-판단-기준)
+  - [**접근 제어자**](#접근-제어자)
   - [**Enum**](#enum)
   - [**String StringBuilder StringTokenizer**](#string-stringbuilder-stringtokenizer)
     - [String](#string)
@@ -216,6 +217,125 @@ Author: Jung
 </br>
 
 - [To.목차](#table-of-contents)
+
+</br>
+</br>
+</br>
+
+### **접근 제어자**
+
+</br>
+
+| 접근제어자 | 동일 패키지 |             다른 패키지              | 클래스 내부 |
+| :--------: | :---------: | :----------------------------------: | :---------: |
+|  private   |      X      |                  X                   |      O      |
+|  default   |      O      |                  X                   |      O      |
+| protected  |      O      | X (상속 받아서 사용하는 경우는 가능) |      O      |
+|   public   |      O      |                  O                   |      O      |
+
+</br>
+
+- Access1으로 test해보기
+
+```java
+
+package com.java.skill.accessmodifier.base;
+
+public class Access1 {
+
+    private String secret; // class 내부에서만 사용 가능
+    String basic; // 해당 패키지에서는 접근 가능
+    protected String protect; // 해당 패키지의 클래스 or 상속받은 클래스에서만 접근 가능
+
+}
+
+```
+
+- 동일 패키지의 다른 클래스 접근
+
+```java
+
+package com.java.skill.accessmodifier.base;
+
+public class Practice {
+    public static void main(String[] args) {
+
+        Access1 access1 = new Access1();
+        // has private access -> 같은 패키지여도 다른 클래스
+//        access1.secret;
+
+        // default로 동일 package에서는 접근 가능
+        System.out.println(access1.basic);
+
+        // protected 동일 package에서 접근 가능
+        System.out.println(access1.protect);
+
+    }
+
+}
+
+```
+
+</br>
+
+> accessmodifier.base로 동일 package  
+> private은 접근 불가  
+> protected와 default는 접근 가능
+
+</br>
+
+- 다른 패키지 접근
+
+```java
+
+package com.java.skill.accessmodifier.other;
+import com.java.skill.accessmodifier.base.Access1;
+
+public class Practice2 {
+    public static void main(String[] args) {
+        Access1 access1 = new Access1();
+
+        // has protected access -> 다른 패키지
+//        access1.protect;
+
+        // is not public -> 다른 패키지
+//        access1.basic;
+    }
+}
+
+```
+
+</br>
+
+> 다른 패키지에서는  
+> private, default, protected 모두 접근 불가
+
+</br>
+
+- 다른 패키지, 상속받은 클래스 접근
+
+```java
+
+package com.java.skill.accessmodifier.other;
+import com.java.skill.accessmodifier.base.Access1;
+
+public class Access2 extends Access1{
+
+    public static void main(String[] args) {
+        Access2 access2 = new Access2();
+        // 상속 받은 클래스에서는 패키지 달라도 가능
+        access2.protect = "child class possible";
+        System.out.println(access2.protect);
+    }
+}
+
+
+```
+
+</br>
+
+> 다른 패키지에서 protected 접근제어자는 접근 불가능  
+> but, `해당 클래스를 상속받은 클래스`는 다른 패키지더라도 접근 가능
 
 </br>
 </br>

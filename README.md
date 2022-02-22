@@ -37,6 +37,7 @@ Author: Jung
       - [**메모리 누수**](#메모리-누수)
       - [**Garbage 판단 기준**](#garbage-판단-기준)
   - [**접근 제어자**](#접근-제어자)
+  - [**상속**](#상속)
   - [**Enum**](#enum)
   - [**String StringBuilder StringTokenizer**](#string-stringbuilder-stringtokenizer)
     - [String](#string)
@@ -336,6 +337,80 @@ public class Access2 extends Access1{
 
 > 다른 패키지에서 protected 접근제어자는 접근 불가능  
 > but, `해당 클래스를 상속받은 클래스`는 다른 패키지더라도 접근 가능
+
+</br>
+</br>
+</br>
+
+### **상속**
+
+</br>
+
+> 게임에서 유저가 있다  
+> 게임에서 유저(부모)는 전직할 수 있다.(자식 - 마법사)
+> 마법사는 유저(부모)의 기능을 사용할 수 있다.
+
+</br>
+
+```java
+
+package practice.basicjava.inheritance;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class User {
+
+    protected String name;
+    protected String job;
+
+    protected User(String name,String job) {
+        this.name = name;
+        this.job = job;
+    }
+
+    protected void move(){
+        System.out.println("이동 합니다.");
+    }
+    protected void basicAttack(){
+        System.out.println("기본 공격을 합니다.");
+    }
+}
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.inheritance;
+
+public class Wizard extends User{
+
+    public Wizard(String name, String job) {
+        super(name, job);
+    }
+
+    public void magicAttack(){
+        System.out.println("마법 공격을 실행합니다.");
+    }
+
+    public void teleport(){
+        System.out.println("텔레포트로 이동합니다.");
+    }
+
+}
+
+
+```
+
+</br>
+
+> wizard는 user의 하위 개념
+> wizard 객체를 user자료형으로 사용할 수 있지만 반대는 X
+> wizard 객체를 user자료형으로 사용할 경우 wizard 메서드 사용 불가
 
 </br>
 </br>

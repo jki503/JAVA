@@ -38,6 +38,8 @@ Author: Jung
       - [**Garbage 판단 기준**](#garbage-판단-기준)
   - [**접근 제어자**](#접근-제어자)
   - [**상속**](#상속)
+  - [**추상 클래스와 인터페이스 차이**](#추상-클래스와-인터페이스-차이)
+  - [**추상 클래스와 인터페이스 차이 예제**](#추상-클래스와-인터페이스-차이-예제)
   - [**Enum**](#enum)
   - [**String StringBuilder StringTokenizer**](#string-stringbuilder-stringtokenizer)
     - [String](#string)
@@ -411,6 +413,172 @@ public class Wizard extends User{
 > wizard는 user의 하위 개념
 > wizard 객체를 user자료형으로 사용할 수 있지만 반대는 X
 > wizard 객체를 user자료형으로 사용할 경우 wizard 메서드 사용 불가
+
+</br>
+</br>
+</br>
+
+### **추상 클래스와 인터페이스 차이**
+
+</br>
+
+> 쓰이는 용도가 다름  
+> Abstract는 상속 받는 클래스들의 분류  
+> Inteface는 클래스들의 동일 역할 소유
+
+</br>
+
+### **추상 클래스와 인터페이스 차이 예제**
+
+</br>
+
+```java
+
+public abstract class Unit {
+
+    protected String name;
+
+    public Unit(String name){
+        this.name = name;
+    }
+
+    public void move(){
+        System.out.println(name + " unit이 움직입니다.");
+    }
+
+    public abstract void attack();
+
+}
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.abstractandinterface;
+
+public interface Flyable {
+
+    public void fly();
+}
+
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.abstractandinterface;
+
+public interface Swimable {
+
+    public void swim();
+}
+
+
+```
+
+</br>
+
+```java
+package practice.basicjava.abstractandinterface;
+
+public interface Walkable {
+
+    public void walk();
+}
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.abstractandinterface;
+
+public class FlyUnit extends Unit implements Flyable, Walkable{
+
+    public FlyUnit(String name) {
+        super(name);
+    }
+
+    @Override
+    public void attack() {
+        System.out.println(name + "이 공중 공격을 시작합니다.");
+    }
+
+    @Override
+    public void fly() {
+        System.out.println(name + " 공중 유닛이 날기 시작합니다 .");
+    }
+
+    @Override
+    public void walk() {
+        System.out.println(name + " 공중 유닛이 걷기 시작합니다.");
+    }
+}
+
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.abstractandinterface;
+
+public class AquaUnit extends Unit implements Walkable, Swimable{
+
+    public AquaUnit(String name) {
+        super(name);
+    }
+
+    @Override
+    public void swim() {
+        System.out.println(name + "수중 유닛이 잠수를 시작합니다.");
+    }
+
+    @Override
+    public void attack() {
+        System.out.println(name + "이 수중 공격을 시작합니다.");
+    }
+
+    @Override
+    public void walk() {
+        System.out.println(name + " 수중 유닛이 걷기 시작합니다.");
+    }
+}
+
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.abstractandinterface;
+
+public class LandUnit extends Unit implements Walkable{
+
+    public LandUnit(String name) {
+        super(name);
+    }
+
+    @Override
+    public void attack() {
+        System.out.println(name + "이 지상 공격을 시작합니다.");
+    }
+
+    @Override
+    public void walk() {
+        System.out.println(name + " 지상 유닛이 걷기 시작합니다.");
+    }
+}
+
+
+```
 
 </br>
 </br>

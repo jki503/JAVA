@@ -37,6 +37,7 @@ Author: Jung
       - [**메모리 누수**](#메모리-누수)
       - [**Garbage 판단 기준**](#garbage-판단-기준)
   - [**접근 제어자**](#접근-제어자)
+  - [**자료형**](#자료형)
   - [**상속**](#상속)
   - [**추상 클래스와 인터페이스 차이**](#추상-클래스와-인터페이스-차이)
   - [**추상 클래스와 인터페이스 차이 예제**](#추상-클래스와-인터페이스-차이-예제)
@@ -46,6 +47,9 @@ Author: Jung
     - [StringBuilder](#stringbuilder)
     - [StringTokenizer](#stringtokenizer)
   - [**Optional**](#optional)
+  - [**Serializable-직렬화와 역직렬화**](#serializable-직렬화와-역직렬화)
+    - [**Json 직렬화 사용하기**](#json-직렬화-사용하기)
+    - [**직렬화 사용시 유의 사항**](#직렬화-사용시-유의-사항)
 
 </br>
 </br>
@@ -339,6 +343,14 @@ public class Access2 extends Access1{
 
 > 다른 패키지에서 protected 접근제어자는 접근 불가능  
 > but, `해당 클래스를 상속받은 클래스`는 다른 패키지더라도 접근 가능
+
+</br>
+</br>
+</br>
+
+### **자료형**
+
+</br>
 
 </br>
 </br>
@@ -913,3 +925,118 @@ public class stringTokenizerPractice {
 </br>
 </br>
 </br>
+
+### **Serializable-직렬화와 역직렬화**
+
+</br>
+
+|                    직렬화와 역직렬화                    |
+| :-----------------------------------------------------: |
+| ![직렬화 img](./res/Serialization-deserialization.jpeg) |
+
+</br>
+
+- 직렬화
+
+> 자바 시스템 내부에서 사용되는 객체 또는 데이터를  
+> 외부의 자바 시스템에서도 사용 할 수 있도록  
+> byte형태로 데이터를 변환하는 기술
+
+</br>
+
+- 역직렬화
+
+> 바이트로 변환된 데이터를 다시 객체로 변환하는 기술
+
+</br>
+
+#### **Json 직렬화 사용하기**
+
+</br>
+
+```java
+
+// build.gradle에 jaskson 추가
+
+implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.4'
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.serializable;
+
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data
+public class Member implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    String name;
+    Long age;
+    transient String password;
+
+    public Member(String name, Long age, String password) {
+        this.name = name;
+        this.age = age;
+        this.password = password;
+    }
+
+    public Member() {
+
+    }
+}
+
+
+```
+
+</br>
+
+```java
+
+package practice.basicjava.serializable;
+
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
+
+public class ImplMember {
+
+    public static void main(String[] args) throws IOException {
+
+        String path = "./src/main/java/practice/basicjava/serializable/test.json";
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        Member member = new Member("jung",28L,"5678");
+
+        mapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER,true);
+        mapper.writeValue(new File(path),member);
+
+        System.out.println(mapper.readValue(new File(path), new Member().getClass()));
+    }
+}
+
+
+```
+
+- Serializable interface 상속 받기
+- 대상 객체의 serialVersionUID가 동일 해야 역직렬화시 올바르게 적용(시스템이 다를 수 있다는 것을 고려)
+- transient 키워드는 직렬화 대상 제외
+- 역직렬화 시 데이터타입이 자동으로 맞춰지기 때문에 기존 객체처럼 바로 사용 가능한 장점
+
+</br>
+
+#### **직렬화 사용시 유의 사항**
+
+- 외부 저장소로 저장되는 데이터의 만료 기간이 길 경우 직렬화 사용 지양
+- 역직렬화시 예외 발생을 고려하고 개발
+- 자주 변경되는 비즈니스적 데이터는 직렬화에 적합하지 않음
+- 긴 만료 시간을 가질 경우 json과 같은 데이터 타입이 적절

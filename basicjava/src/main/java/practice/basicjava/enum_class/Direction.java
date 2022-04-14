@@ -1,4 +1,4 @@
-package practice.basicjava.Enum;
+package practice.basicjava.enum_class;
 
 public enum Direction {
     // 명시적 index 설정

@@ -1,4 +1,4 @@
-package practice.basicjava.Enum;
+package practice.basicjava.enum_class;
 
 import java.lang.Enum;
 import java.util.Arrays;

@@ -50,6 +50,9 @@ Author: Jung
   - [**Serializable-직렬화와 역직렬화**](#serializable-직렬화와-역직렬화)
     - [**Json 직렬화 사용하기**](#json-직렬화-사용하기)
     - [**직렬화 사용시 유의 사항**](#직렬화-사용시-유의-사항)
+  - [**Exception**](#exception)
+  - [예외 처리 종류](#예외-처리-종류)
+  - [예외 처리 잘하는 방법](#예외-처리-잘하는-방법)
 
 </br>
 </br>
@@ -1040,3 +1043,143 @@ public class ImplMember {
 - 역직렬화시 예외 발생을 고려하고 개발
 - 자주 변경되는 비즈니스적 데이터는 직렬화에 적합하지 않음
 - 긴 만료 시간을 가질 경우 json과 같은 데이터 타입이 적절
+
+</br>
+</br>
+</br>
+
+### **Exception**
+
+</br>
+
+- Error
+
+> 시스템에 비정상적 상황이 생겼을 때 발생,  
+> 시스템 레벨에서 발생함으로 심각한 오류  
+> 개발자가 미리 예측하여 처리할 수 없음
+
+</br>
+
+- Exception
+
+> 개발자가 구현한 로직에서 발생  
+> 즉, `예외가 발생할 상황을 미리 예측하여 개발자가 처리 가능`
+
+</br>
+
+|               Error - Exception 계층                |
+| :-------------------------------------------------: |
+| ![error - exception img](./res/exception_class.png) |
+
+</br>
+
+|                            |     Checked Exception     |                                Uncheked Exception                                |
+| :------------------------: | :-----------------------: | :------------------------------------------------------------------------------: |
+|         처리 여부          |     반드시 예외 처리      |                                명시적 처리 강제 X                                |
+|         확인 시점          |        컴파일 단계        |                                   런타임 단계                                    |
+| 예외 발생 시 트랜잭션 처리 |        roll-back X        |                                   roll-back O                                    |
+|         대표 예외          | IOException, SQLException | NullPointer, IllegalArgumentException, IndexOutOfBoundException, SystemException |
+
+</br>
+
+### 예외 처리 종류
+
+</br>
+
+- 예외 복구 : 다른 작업 흐름으로 유도
+- 예외처리 회피 : 처리하지 않고 호출한 쪽으로 throw
+- 예외 전환 : checkedException과 같은 exception을 정확한 의미의 예외로 전환 후 throw
+
+</br>
+
+### 예외 처리 잘하는 방법
+
+</br>
+
+- 리소스 정리
+
+> try-catch 구문에서 리소스를 열었으면 finally에서 리소스를 정리하거나,  
+> try-with-resource 구문 사용하기
+
+</br>
+
+- 더 자세한 예외로 명시해주기
+
+> 메소드에서 발생할 수 있는 예외를 최대한 자세한 예외로 명시하기
+
+</br>
+
+```java
+
+public void exceptableMethod throw Exception;
+public void exceptableMethod throw NumberFormatException; // 좋은 예
+
+```
+
+</br>
+
+- 메시지 자세하게 적기
+
+</br>
+
+- catch 절 순서는 좀 더 상세한 예외부터 처리하는 방식으로
+
+</br>
+
+- Throwable은 catch X
+
+> 예외뿐만 아니라 에러도 잡아서 처리하여 JVM에서 예상치 못한 동작 실행 할 수 있음
+
+</br>
+
+- 예외를 먹지 마라
+
+```java
+
+try{
+
+}catch(Exception e){
+    ???
+}
+
+```
+
+> 예외 처리 하지 않을거면 하지 않던가  
+> log라도 찍던가  
+> 주석으로 왜 ignore 하는지
+
+</br>
+
+- 로그 찍고 다시 던지지 마라
+
+</br>
+
+```java
+try{
+    new Long("xyz");
+}catch(NumberFormatException e){
+    log.error(e); // log 찍고 던지기
+    throw e;
+}
+```
+
+</br>
+
+> 로그가 너무 자주 찍혀 가독성 훼손 우려  
+> 위의 상황 처럼 상위로 Throw할 경우 컨텍스트를 남기고 싶다면  
+> 차라리 예외를 래핑해서 새로운 클래스를 만들고  
+> 컨텍스트에 대한 정보를 담아 상위로 던져야 한다.
+
+</br>
+
+- 예외를 래핑할 경우 Cause 예외를 담아서 던져라
+
+</br>
+
+```java
+    try{
+        method();
+    }catch(NumberFormatException e){
+        throw new MyException("New Message", e);
+    }
+```
